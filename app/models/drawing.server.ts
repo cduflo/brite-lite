@@ -1,30 +1,36 @@
 import type { User } from "./user.server";
 import { supabase } from "./user.server";
 
-export type Note = {
+export type Drawing = {
   id: string;
   title: string;
-  body: string;
+  matrix: string[][];
+  width: number;
   profile_id: string;
 };
 
-export async function getNoteListItems({ userId }: { userId: User["id"] }) {
+const TABLE_NAME = "drawings";
+
+export async function getDrawingListItems({ userId }: { userId: User["id"] }) {
   const { data } = await supabase
-    .from("notes")
-    .select("id, title")
+    .from(TABLE_NAME)
+    .select("id, title, matrix, width")
     .eq("profile_id", userId);
 
   return data;
 }
 
-export async function createNote({
+export async function createDrawing({
   title,
-  body,
+  matrix,
+  width,
   userId,
-}: Pick<Note, "body" | "title"> & { userId: User["id"] }) {
+}: Pick<Drawing, "matrix" | "title" | "width"> & {
+  userId: User["id"];
+}) {
   const { data, error } = await supabase
-    .from("notes")
-    .insert([{ title, body, profile_id: userId }])
+    .from(TABLE_NAME)
+    .insert([{ title, matrix, width, profile_id: userId }])
     .single();
 
   if (!error) {
@@ -34,12 +40,12 @@ export async function createNote({
   return null;
 }
 
-export async function deleteNote({
+export async function deleteDrawing({
   id,
   userId,
-}: Pick<Note, "id"> & { userId: User["id"] }) {
+}: Pick<Drawing, "id"> & { userId: User["id"] }) {
   const { error } = await supabase
-    .from("notes")
+    .from(TABLE_NAME)
     .delete({ returning: "minimal" })
     .match({ id, profile_id: userId });
 
@@ -50,12 +56,12 @@ export async function deleteNote({
   return null;
 }
 
-export async function getNote({
+export async function getDrawing({
   id,
   userId,
-}: Pick<Note, "id"> & { userId: User["id"] }) {
+}: Pick<Drawing, "id"> & { userId: User["id"] }) {
   const { data, error } = await supabase
-    .from("notes")
+    .from(TABLE_NAME)
     .select("*")
     .eq("profile_id", userId)
     .eq("id", id)

@@ -1,8 +1,10 @@
 import type { ActionFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form } from "@remix-run/react";
-import { createNote } from "~/models/note.server";
+import { useState } from "react";
+import { createDrawing } from "~/models/drawing.server";
 import { requireUserId } from "~/session.server";
+import Board from "./board";
 
 export const action: ActionFunction = async ({ request }) => {
   const userId = await requireUserId(request);
@@ -19,11 +21,39 @@ export const action: ActionFunction = async ({ request }) => {
     return json({ errors: { body: "Body is required" } }, { status: 400 });
   }
 
-  const note = await createNote({ title, body, userId });
-  return redirect(`/notes/${note.id}`);
+  // todo: rm
+  const width = 5;
+  const matrix = [[]];
+  const drawing = await createDrawing({ title, width, matrix, userId });
+  return redirect(`/drawings/${drawing.id}`);
 };
 
-export default function NewNotePage() {
+const defaultBoard = (width, height) => {
+  const board = [];
+  for (let i = 0; i < width; i++) {
+    const row = [];
+    for (let j = 0; j < height; j++) {
+      row[j] = 0;
+    }
+    board[i] = row;
+  }
+
+  return board;
+};
+
+export default function NewDrawingPage() {
+  const width = 5;
+
+  const [matrix, setMatrix] = useState(defaultBoard(5, 5));
+
+  const placePeg = (coordinates, peg) => {
+    const newMatrix = [...matrix];
+
+    newMatrix[coordinates[0]][coordinates[1]] = peg;
+    // console.log({ newMatrix });
+    setMatrix(newMatrix);
+  };
+
   return (
     <Form
       method="post"
@@ -46,11 +76,7 @@ export default function NewNotePage() {
       <div>
         <label className="flex w-full flex-col gap-1">
           <span>Body: </span>
-          <textarea
-            name="body"
-            rows={8}
-            className="w-full flex-1 rounded-md border-2 border-blue-500 py-2 px-3 text-lg leading-6"
-          ></textarea>
+          <Board matrix={matrix} placePeg={placePeg} />
         </label>
       </div>
 
