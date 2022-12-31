@@ -1,29 +1,25 @@
 import type { ActionFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form } from "@remix-run/react";
+import { Form, useSubmit } from "@remix-run/react";
 import { useState } from "react";
-import { createDrawing } from "~/models/drawing.server";
-import { requireUserId } from "~/session.server";
 import Board from "./board";
 
-export const action: ActionFunction = async ({ request }) => {
-  const userId = await requireUserId(request);
+export const action: ActionFunction = async ({ request, ...rest }) => {
+  console.log({ rest });
+  console.log({ request });
 
   const formData = await request.formData();
+  console.log({ formData });
+
   const title = formData.get("title");
-  const body = formData.get("body");
+  const matrix = formData.get("matrix");
+  const width = formData.get("width");
+  console.log({ title, matrix, width });
 
   if (typeof title !== "string" || title.length === 0) {
     return json({ errors: { title: "Title is required" } }, { status: 400 });
   }
 
-  if (typeof body !== "string" || body.length === 0) {
-    return json({ errors: { body: "Body is required" } }, { status: 400 });
-  }
-
-  // todo: rm
-  const width = 5;
-  const matrix = [[]];
   const drawing = await createDrawing({ title, width, matrix, userId });
   return redirect(`/drawings/${drawing.id}`);
 };
@@ -45,6 +41,7 @@ export default function NewDrawingPage() {
   const width = 5;
 
   const [matrix, setMatrix] = useState(defaultBoard(5, 5));
+  const submit = useSubmit();
 
   const placePeg = (coordinates, peg) => {
     const newMatrix = [...matrix];
@@ -54,9 +51,30 @@ export default function NewDrawingPage() {
     setMatrix(newMatrix);
   };
 
+  const onSubmit = (event) => {
+    // let's prevent the default event
+    event.preventDefault();
+
+    // grab the form element
+    let $form = event.currentTarget;
+
+    // get the formData from that form
+    let formData = new FormData($form);
+
+    formData.set("matrix", JSON.stringify(matrix));
+    formData.set("width", width);
+
+    // and finally submit the form data, re-using the method and action from the form
+    submit(formData, {
+      method: $form.getAttribute("method") ?? $form.method,
+      action: $form.getAttribute("action") ?? $form.action,
+    });
+  };
+
   return (
     <Form
       method="post"
+      onSubmit={onSubmit}
       style={{
         display: "flex",
         flexDirection: "column",
@@ -75,8 +93,8 @@ export default function NewDrawingPage() {
       </div>
       <div>
         <label className="flex w-full flex-col gap-1">
-          <span>Body: </span>
-          <Board matrix={matrix} placePeg={placePeg} />
+          <span>Drawing: </span>
+          <Board name="matrix" matrix={matrix} placePeg={placePeg} />
         </label>
       </div>
 
@@ -84,6 +102,7 @@ export default function NewDrawingPage() {
         <button
           type="submit"
           className="rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
+          // onClick={handleSubmit}
         >
           Save
         </button>

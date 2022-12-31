@@ -1,7 +1,6 @@
-import { Drawing } from "~/models/drawing.server";
+import { Room } from "~/models/rooms.server";
 
 const PegColors = {
-  black: "border",
   red: "bg-red-500 shadow-red-500/50",
   orange: "bg-orange-500 shadow-orange-500/50",
   yellow: "bg-yellow-500 shadow-yellow-500/50",
@@ -9,11 +8,14 @@ const PegColors = {
   blue: "bg-cyan-500 shadow-cyan-500/50",
   purple: "bg-purple-500 shadow-purple-500/50",
   pink: "bg-pink-500 shadow-pink-500/50",
-  white: "bg-white-500 shadow-white-500/50",
+  white: "bg-white shadow-white/50",
 };
 
-function Peg({ colorIndex = 0 }: { colorIndex: number }) {
-  const tailwindColorClasses = Object.values(PegColors)[colorIndex];
+function Peg({ colorIndex }: { colorIndex: number }) {
+  const tailwindColorClasses =
+    colorIndex > -1 ? Object.values(PegColors)[colorIndex] : "border";
+
+  console.log({ tailwindColorClasses });
 
   return (
     <div
@@ -36,7 +38,7 @@ function Hole({
 
   const handleClick = () => {
     let newPeg = 0;
-    if (peg >= 0 && Object.values(PegColors)[peg]) {
+    if (peg >= 0 && Object.values(PegColors)[peg + 1]) {
       newPeg = peg + 1;
     }
 
@@ -57,24 +59,24 @@ export default function Board({
   matrix,
   placePeg,
 }: {
-  matrix: Drawing["matrix"];
+  matrix: Room["matrix"];
   placePeg: (coordinate: [number, number], peg: number) => {};
 }) {
   console.log({ matrix });
   return (
-    <div style={{ width: "200px" }}>
-      <div className="flex flex-auto flex-wrap justify-around">
-        {matrix.map((row, rowIndex) =>
-          row.map((peg, holeIndex) => (
+    <div className="m-auto w-4/5 bg-black">
+      {matrix.map((row, rowIndex) => (
+        <div className="flex ">
+          {row.map((peg, holeIndex) => (
             <Hole
               key={`${rowIndex}-${holeIndex}`}
               coordinates={[rowIndex, holeIndex]}
               peg={peg}
               placePeg={placePeg}
             />
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      ))}
     </div>
   );
 }

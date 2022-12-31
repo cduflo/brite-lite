@@ -17,7 +17,13 @@ invariant(
   "SUPABASE_ANON_KEY must be set in your environment variables."
 );
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  realtime: {
+    params: {
+      eventsPerSecond: '10',
+    },
+  },
+});
 
 export async function createUser(email: string, password: string) {
   const { user } = await supabase.auth.signUp({
