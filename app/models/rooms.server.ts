@@ -42,7 +42,8 @@ const generateMatrix = (height = 20, width = 25) => {
 export async function createRoom({ zoomId }: Pick<Room, "zoomId">) {
   const { data, error } = await supabase
     .from(TABLE_NAME)
-    .insert([{ zoomId, matrix: generateMatrix() }])
+    .insert({ zoomId, matrix: generateMatrix() })
+    .select()
     .single();
 
   if (!error) {
