@@ -1,18 +1,31 @@
-import { ActionFunction, LoaderArgs, redirect } from "@remix-run/node";
+import { ActionFunction, LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
-import { useState } from "react";
 import Board from "./board";
-import { createRoom, getRoom, resetDrawing, Room } from "~/models/rooms.server";
+import { getRoom, resetDrawing, Room } from "~/models/rooms.server";
+import { Provider } from "react-supabase";
+import { createClient } from "@supabase/supabase-js";
 
 type LoaderData = {
   room: Room;
 };
 
+// todo: get from .env file, move to util
+export const supabase = createClient(
+  "https://yhxkdwrkixmfqsamsfba.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InloeGtkd3JraXhtZnFzYW1zZmJhIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NzEyMTUzMzcsImV4cCI6MTk4Njc5MTMzN30.1p7pjjnXKbIbfeHmTTAUcyLYZmneBNIeg29CEP8zP9A",
+  {
+    realtime: {
+      params: {
+        eventsPerSecond: "10",
+      },
+    },
+  }
+);
+
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.roomId, "roomId not found");
-
 
   const room = await getRoom({ id: params.roomId });
   if (!room) {
@@ -34,21 +47,12 @@ export default function DrawingDetailsPage() {
   const data = useLoaderData<typeof loader>() as LoaderData;
   console.log({ data });
 
-  const [matrix, setMatrix] = useState(data.room.matrix);
-
   return (
-    <div>
-      {/* <h3 className="text-2xl font-bold">{data.drawing.title}</h3> */}
-      <Board matrix={matrix} placePeg={() => {}} />
-      <hr className="my-4" />
-      <Form method="post">
-        <button
-          type="submit"
-          className="rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
-        >
-          Reset
-        </button>
-      </Form>
-    </div>
+    <Provider value={supabase}>
+      <div>
+        {/* <h3 className="text-2xl font-bold">{data.drawing.title}</h3> */}
+        <Board matrix={data.room?.matrix} roomId={data.room?.id} />
+      </div>
+    </Provider>
   );
 }

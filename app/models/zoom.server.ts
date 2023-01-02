@@ -1,30 +1,9 @@
-import { createClient } from "@supabase/supabase-js";
-import invariant from "tiny-invariant";
-
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
-
-invariant(
-  supabaseUrl,
-  "SUPABASE_URL must be set in your environment variables."
-);
-invariant(
-  supabaseAnonKey,
-  "SUPABASE_ANON_KEY must be set in your environment variables."
-);
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  realtime: {
-    params: {
-      eventsPerSecond: "10",
-    },
-  },
-});
+import { supabase } from "./user.server";
 
 export type Room = {
   id: string;
   zoomId?: string;
-  matrix: number[][];
+  matrix: string[][];
   width: number;
 };
 
@@ -53,18 +32,22 @@ export async function createRoom({ zoomId }: Pick<Room, "zoomId">) {
   return data;
 }
 
-export async function setBoardPeg({ id, matrix }: Pick<Room, "id" | "matrix">) {
-  const { error } = await supabase
-    .from(TABLE_NAME)
-    .update({ matrix })
-    .eq("id", id);
+// export async function setPeg({
+//   id,
+//   coordinate,
+//   colorId
+// }: Pick<Room, "id"> & { userId: User["id"] }) {
+//   const { error } = await supabase
+//     .from(TABLE_NAME)
+//     .update({ matrix: DEFAULT_MATRIX })
+//     .eq("id", id);
 
-  if (!error) {
-    return {};
-  }
+//   if (!error) {
+//     return {};
+//   }
 
-  return null;
-}
+//   return null;
+// }
 
 export async function resetDrawing({ id }: Pick<Room, "id">) {
   const { error } = await supabase
