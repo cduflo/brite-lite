@@ -25,7 +25,13 @@ export default function Index() {
                 project deployed.
               </p>
               <div className="mx-auto mt-10 max-w-sm sm:flex sm:max-w-none sm:justify-center">
-                (
+                <Link
+                  to="/room/new"
+                  className="flex items-center justify-center rounded-md border border-transparent bg-white px-4 py-3 text-base font-medium text-violet-700 shadow-sm hover:bg-violet-50 sm:px-8"
+                >
+                  New Room
+                </Link>
+                {/* (
                 <div className="space-y-4 sm:mx-auto sm:inline-grid sm:grid-cols-2 sm:gap-5 sm:space-y-0">
                   <Link
                     to="/room/new"
@@ -40,7 +46,7 @@ export default function Index() {
                     Join Room (1b60040a-2c09-43ed-ab7a-e42ac0cc30eb)
                   </Link>
                 </div>
-                )
+                ) */}
               </div>
             </div>
           </div>

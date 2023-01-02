@@ -3,7 +3,7 @@ import { useUpdate } from "react-supabase";
 import { createContext, useState } from "react";
 import { supabase } from "../$roomId";
 import { Hole } from "./hole";
-import { ColorSelector } from "./color-selector";
+import { Header } from "./header";
 
 export const PegColors = {
   red: "bg-red-500 shadow-red-500/50",
@@ -66,7 +66,7 @@ export default function Board({
         colorSelected,
       }}
     >
-      <ColorSelector />
+      <Header />
       <div className="m-auto bg-black">
         {localMatrix.map((row, rowIndex) => (
           <div className="flex" key={rowIndex}>

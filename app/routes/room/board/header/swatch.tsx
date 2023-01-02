@@ -6,7 +6,7 @@ export function Swatch({ colorIndex }: { colorIndex: number }) {
 
   const tailwindColorClasses =
     colorIndex > -1 ? Object.values(PegColors)[colorIndex] : "bg-black";
-  const selectedClasses = colorIndex === colorSelected ? "border" : "";
+  const selectedClasses = colorIndex === colorSelected ? "border-2" : "";
 
   return (
     <div
