@@ -1,9 +1,8 @@
 import { LoaderArgs, redirect } from "@remix-run/node";
-import { createRoom } from "~/models/rooms.server";
+import { createRoom, MatrixSize } from "~/models/rooms.server";
 
 export async function loader({ params }: LoaderArgs) {
-  const newRoom = await createRoom({});
-  // console.log({ newRoom, window });
+  const newRoom = await createRoom({ size: params.size as MatrixSize });
   return redirect(`/room/${newRoom.id}`);
 }
 

@@ -1,6 +1,8 @@
-import { Link } from "@remix-run/react";
+import { useNavigate } from "@remix-run/react";
 
 export default function Index() {
+  const navigate = useNavigate();
+
   return (
     <main className="relative min-h-screen  sm:flex sm:items-center sm:justify-center">
       <div className="relative sm:pb-16 sm:pt-8">
@@ -25,12 +27,20 @@ export default function Index() {
                 project deployed.
               </p>
               <div className="mx-auto mt-10 max-w-sm sm:flex sm:max-w-none sm:justify-center">
-                <Link
-                  to="/room/new"
-                  className="flex items-center justify-center rounded-md border border-transparent bg-white px-4 py-3 text-base font-medium text-violet-700 shadow-sm hover:bg-violet-50 sm:px-8"
+                <button
+                  onClick={() => {
+                    const size =
+                      window.innerWidth < 400
+                        ? "sm"
+                        : window.innerWidth < 800
+                        ? "md"
+                        : "lg";
+                    navigate(`/room/new/${size}`);
+                  }}
+                  className="m-auto flex items-center justify-center rounded-md border border-transparent bg-white px-4 py-3 text-base font-medium text-violet-700 shadow-sm hover:bg-violet-50 sm:px-8"
                 >
                   New Room
-                </Link>
+                </button>
                 {/* (
                 <div className="space-y-4 sm:mx-auto sm:inline-grid sm:grid-cols-2 sm:gap-5 sm:space-y-0">
                   <Link

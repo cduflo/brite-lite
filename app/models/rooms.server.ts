@@ -30,6 +30,20 @@ export type Room = {
 
 const TABLE_NAME = "rooms";
 
+export type MatrixSize = "sm" | "md" | "lg" | undefined;
+
+const getMatrixDims = (size: MatrixSize) => {
+  switch (size) {
+    case "sm":
+      return [16, 10];
+    case "md":
+      return [20, 18];
+    case "lg":
+    default:
+      return [20, 25];
+  }
+};
+
 const generateMatrix = (height = 20, width = 25) => {
   const matrix = [];
   for (let h = 0; h < height; h++) {
@@ -39,10 +53,13 @@ const generateMatrix = (height = 20, width = 25) => {
   return matrix;
 };
 
-export async function createRoom({ zoomId }: Pick<Room, "zoomId">) {
+export async function createRoom({
+  zoomId,
+  size,
+}: { size: MatrixSize } & Pick<Room, "zoomId">) {
   const { data, error } = await supabase
     .from(TABLE_NAME)
-    .insert({ zoomId, matrix: generateMatrix() })
+    .insert({ zoomId, matrix: generateMatrix(...getMatrixDims(size)), size })
     .select()
     .single();
 
@@ -68,9 +85,15 @@ export async function setBoardPeg({ id, matrix }: Pick<Room, "id" | "matrix">) {
 }
 
 export async function resetDrawing({ id }: Pick<Room, "id">) {
+  const { data } = await supabase
+    .from(TABLE_NAME)
+    .select("size")
+    .eq("id", id)
+    .single();
+
   const { error } = await supabase
     .from(TABLE_NAME)
-    .update({ matrix: generateMatrix() })
+    .update({ matrix: generateMatrix(...getMatrixDims(data?.size)) })
     .eq("id", id);
 
   if (!error) {
