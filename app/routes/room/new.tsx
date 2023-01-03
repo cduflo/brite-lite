@@ -3,7 +3,7 @@ import { createRoom } from "~/models/rooms.server";
 
 export async function loader({ params }: LoaderArgs) {
   const newRoom = await createRoom({});
-  console.log({ newRoom });
+  // console.log({ newRoom, window });
   return redirect(`/room/${newRoom.id}`);
 }
 
