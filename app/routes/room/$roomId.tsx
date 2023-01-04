@@ -38,14 +38,13 @@ export async function loader({ request, params }: LoaderArgs) {
 export const action: ActionFunction = async ({ request, params }) => {
   invariant(params.roomId, "roomId not found");
 
-  await resetDrawing({ id: params.roomId });
+  const newData = await resetDrawing({ id: params.roomId });
 
-  return null;
+  return newData;
 };
 
 export default function DrawingDetailsPage() {
   const data = useLoaderData<typeof loader>() as LoaderData;
-  console.log({ data });
 
   return (
     <Provider value={supabase}>

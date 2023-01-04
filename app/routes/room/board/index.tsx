@@ -67,18 +67,20 @@ export default function Board({
       }}
     >
       <Header />
-      <div className="m-auto bg-black">
-        {localMatrix.map((row, rowIndex) => (
-          <div className="flex" key={rowIndex}>
-            {row.map((peg, holeIndex) => (
-              <Hole
-                key={`${rowIndex}-${holeIndex}`}
-                coordinates={[rowIndex, holeIndex]}
-                peg={peg}
-              />
-            ))}
-          </div>
-        ))}
+      <div className="flex">
+        <div className="m-auto overflow-auto bg-black">
+          {localMatrix.map((row, rowIndex) => (
+            <div className="flex justify-center" key={rowIndex}>
+              {row.map((peg, holeIndex) => (
+                <Hole
+                  key={`${rowIndex}-${holeIndex}`}
+                  coordinates={[rowIndex, holeIndex]}
+                  peg={peg}
+                />
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
     </BoardContext.Provider>
   );

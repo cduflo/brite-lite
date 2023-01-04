@@ -14,7 +14,13 @@ export function Hole({
   return (
     <div
       onClick={() => setPeg(coordinates)}
-      className="flex h-10 w-10 cursor-pointer items-center justify-center bg-black "
+      style={{
+        minHeight: "40px",
+        minWidth: "40px",
+        maxHeight: "40px",
+        maxWidth: "40px",
+      }}
+      className="flex cursor-pointer items-center justify-center bg-black"
     >
       <Peg colorIndex={peg} />
     </div>

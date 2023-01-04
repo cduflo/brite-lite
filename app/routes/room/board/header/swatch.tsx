@@ -11,8 +11,13 @@ export function Swatch({ colorIndex }: { colorIndex: number }) {
   return (
     <div
       onClick={() => setColorSelected(colorIndex)}
-      style={{ height: "30px", width: "30px" }}
-      className={`rounded-full ${tailwindColorClasses} ${selectedClasses} cursor-pointer shadow-lg `}
+      style={{
+        minHeight: "30px",
+        minWidth: "30px",
+        maxHeight: "30px",
+        maxWidth: "30px",
+      }}
+      className={`rounded-full ${tailwindColorClasses} ${selectedClasses} cursor-pointer shadow-none`}
     />
   );
 }

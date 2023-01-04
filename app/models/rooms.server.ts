@@ -91,13 +91,14 @@ export async function resetDrawing({ id }: Pick<Room, "id">) {
     .eq("id", id)
     .single();
 
-  const { error } = await supabase
+  const { data: newData, error } = await supabase
     .from(TABLE_NAME)
     .update({ matrix: generateMatrix(...getMatrixDims(data?.size)) })
-    .eq("id", id);
+    .eq("id", id)
+    .select();
 
   if (!error) {
-    return {};
+    return newData;
   }
 
   return null;
