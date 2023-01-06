@@ -6,6 +6,7 @@ import Board from "./board";
 import { getRoom, resetDrawing, Room } from "~/models/rooms.server";
 import { Provider } from "react-supabase";
 import { createClient } from "@supabase/supabase-js";
+import { useEffect } from "react";
 
 type LoaderData = {
   room: Room;
@@ -46,9 +47,16 @@ export const action: ActionFunction = async ({ request, params }) => {
 export default function DrawingDetailsPage() {
   const data = useLoaderData<typeof loader>() as LoaderData;
 
+  useEffect(() => {
+    document
+      .querySelector("#the-board")
+      ?.requestFullscreen()
+      .catch((e) => console.log("Cannot enter fullscreen", { e }));
+  }, []);
+
   return (
     <Provider value={supabase}>
-      <div>
+      <div id="the-board">
         {/* <h3 className="text-2xl font-bold">{data.drawing.title}</h3> */}
         <Board matrix={data.room?.matrix} roomId={data.room?.id} />
       </div>
