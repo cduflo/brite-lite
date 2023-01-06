@@ -48,10 +48,16 @@ export default function DrawingDetailsPage() {
   const data = useLoaderData<typeof loader>() as LoaderData;
 
   useEffect(() => {
-    document
-      .querySelector("#the-board")
-      ?.requestFullscreen()
-      .catch((e) => console.log("Cannot enter fullscreen", { e }));
+    try {
+      const elem = document.querySelector("#the-board");
+      if (elem?.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem?.webkitEnterFullScreen) {
+        elem.webkitEnterFullScreen();
+      }
+    } catch (e) {
+      console.log("Cannot enter fullscreen", e);
+    }
   }, []);
 
   return (
