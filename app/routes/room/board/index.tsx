@@ -68,7 +68,7 @@ export default function Board({
     >
       <Header />
       <div className="flex">
-        <div className="m-auto select-none overflow-auto bg-black">
+        <div className="m-auto select-none bg-black">
           {localMatrix.map((row, rowIndex) => (
             <div className="flex justify-center" key={rowIndex}>
               {row.map((peg, holeIndex) => (

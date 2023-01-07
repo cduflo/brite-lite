@@ -13,7 +13,7 @@ export function Hole({
 
   return (
     <div
-      onClick={() => setPeg(coordinates)}
+      onPointerDown={() => setPeg(coordinates)}
       style={{
         minHeight: "40px",
         minWidth: "40px",

@@ -62,7 +62,7 @@ export default function DrawingDetailsPage() {
 
   return (
     <Provider value={supabase}>
-      <div id="the-board">
+      <div id="the-board" className="h-full w-full overflow-hidden">
         {/* <h3 className="text-2xl font-bold">{data.drawing.title}</h3> */}
         <Board matrix={data.room?.matrix} roomId={data.room?.id} />
       </div>
